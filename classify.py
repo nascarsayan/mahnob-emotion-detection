@@ -22,7 +22,7 @@ CONFIG_PATH = 'config.json'
 MODELS = ['random_forest', 'xgboost']
 MODELS_ACR = {'random_forest': 'rf', 'xgboost': 'xgb'}
 # MODELS = ['random_forest', 'xgboost', 'svm_rbf']
-# DIVTYPES = ['random', 'subjectid']
+DIVTYPES = ['random', 'subjectid']
 exclude_labels = [
     'valence', 'arousal', 'control', 'prediction', 'emotion', 'stim_video',
     'subjectid', 'index'
@@ -61,13 +61,13 @@ def parse_args():
       '--average',
       action='store_true',
       help='Average out all channels -- Use this feature')
-  # parser.add_argument(
-  #     '-d',
-  #     '--divtype',
-  #     choices=DIVTYPES,
-  #     default=['random'],
-  #     nargs='+',
-  #     help='How to split the data into train and test sets')
+  parser.add_argument(
+      '-d',
+      '--divtype',
+      choices=DIVTYPES,
+      default=['random'],
+      nargs='+',
+      help='How to split the data into train and test sets')
   parser.add_argument(
       '-m',
       '--model',
@@ -195,7 +195,7 @@ def plot_feature_importance(feature_importances, file_path, show_fig=False):
           name=emodim_labels[i * 2 + j]
       ), row = i + 1, col = j + 1)
   fig.update_layout(title_text="Feature Importance", height=1000)
-  fig.write_image(file_path)
+  fig.write_html(file_path)
   if show_fig:
     fig.show()
   else:
@@ -245,7 +245,7 @@ def save_summary(folder_path, slugs,acc_train, acc_test):
       bargap=0.15, # gap between bars of adjacent location coordinates.
       bargroupgap=0.1 # gap between bars of the same location coordinate.
   )
-  fig.write_image(f'{folder_path}/accuracy_summagy.svg')
+  fig.write_html(f'{folder_path}/accuracy_summary.html')
 
 def main():
   conf = parse_args()
@@ -279,8 +279,8 @@ def main():
           acc_test.append(result['accuracy']['test'])
 
         feature_importances = pd.concat(feature_importance_array, axis=1)
-        plot_feature_importance(feature_importances, f'{folder_path}/{common_prefix}__feature_importances.svg')
-        roc_figure.write_image(f'{folder_path}/{common_prefix}__roc.svg')
+        plot_feature_importance(feature_importances, f'{folder_path}/{common_prefix}__feature_importances.html')
+        roc_figure.write_html(f'{folder_path}/{common_prefix}__roc.html')
   
   save_summary(folder_path, slugs, acc_train, acc_test)
 
